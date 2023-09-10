@@ -46,6 +46,36 @@ Then, you can use your dataset in other files by `from Dataloader import MyData`
 - torch==2.0.1
 - tqdm==4.65.0
 
+### Necessary files
+```
+data
+├── Dataloader.py
+├── Encoders
+    ├── TabularEncoder.py
+T-COL
+├── ExtractProto.py
+├── GLT.py
+├── CreateCFsWithGLT.py
+├── tree_path.json
+├── vali_model.py
+```
+
+### Files needed for each dataset
+*Take adult income as an example.*
+```
+dataset
+├── Datasets
+    ├── adult_pre.csv
+generate CEs
+├── gen_adult.py
+├── Adult
+    ├── dice_adult.py
+evaluation
+├── preference_adult.py
+├── sparsity_adult.py
+├── datafidelity_adult.py
+```
+
 ### Usage Example
 ```python
 from CreateCFsWithGLT import Creator
