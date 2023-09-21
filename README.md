@@ -58,6 +58,10 @@ T-COL
 ├── CreateCFsWithGLT.py
 ├── tree_path.json
 ├── vali_model.py
+evaluation
+├── preference.py
+├── sparsity.py
+├── datafidelity.py
 ```
 
 ### Files needed for each dataset
@@ -70,10 +74,30 @@ generate CEs
 ├── gen_adult.py
 ├── Adult
     ├── dice_adult.py
-evaluation
-├── preference_adult.py
-├── sparsity_adult.py
-├── datafidelity_adult.py
+```
+
+
+### Reappearance Experiments
+If you just want to reappearance the results in the paper, please do not run the "generate.py". The samples will be random selected when run the "generate.py" and the result may change.
+```bash
+python preference.py -d [name_of_dataset]       # the name can be ["adult","german","titanic","water","phoneme"]
+python sparsity.py -d [name_of_dataset]
+python datafidelity.py -d [name_of_dataset]
+```
+If you want to generate new CEs and evaluation, the CEs can be generated following the bellow commands.
+```bash
+# First to generate counterfactual explanations for selected datasets.
+python generate.py -p 'rep' -f 'rss' -d 'adult' -dp 3 -g 0 -vm 'RF' -dl 1 -sl 0 -n 5
+# Then generate counterfactual explanations with Dice.
+python ./Adult/dice_adult.py    # take adult as an example
+# Then constract the results.
+python preference.py -d [name_of_dataset]       # the name can be ["adult","german","titanic","water","phoneme"]
+python sparsity.py -d [name_of_dataset]
+python datafidelity.py -d [name_of_dataset]
+```
+You can also generate CEs by LLM (Spark) running the "Spark_CEs.py". Before you run this file, an [api](https://xinghuo.xfyun.cn/sparkapi) is needed.
+```bash
+python Spark_CEs.py -d [name_of_dataset]
 ```
 
 ### Usage Example
@@ -92,18 +116,6 @@ creator = Creator(model, data, s, _data.categorical_features, args.depth, args.d
 proto = "good"
 CEs = pd.DataFrame(creator.createCFs(args.proto, dataset=args.data, device=args.gpu, func = args.func), columns=data.columns.values)            # 默认german,cos,fcs a
 CEs.to_csv("Adult/colt_good_fcs.csv",index=False)
-```
-
-### Reappearance Experiments
-```bash
-# First to generate counterfactual explanations for selected datasets.
-python gen_adult.py -p 'rep' -f 'rss' -d 'adult' -dp 3 -g 0 -vm 'RF' -dl 1 -sl 0 -n 5
-# Then generate counterfactual explanations with Dice.
-python ./Adult/dice_adult.py    # take adult as an example
-# Then constract the results.
-python main_adult.py
-python sparsity.py
-python datafidelity_adult.py
 ```
 
 ## Citation
