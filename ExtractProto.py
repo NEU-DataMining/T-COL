@@ -21,6 +21,18 @@ class GetPrototypes():
         elif dataset == "german":
             c = "credits"
             pass
+        elif dataset == "titanic":
+            c = "Survived"
+            pass
+        elif dataset == "water":
+            c = "Potability"
+            pass
+        elif dataset == "airline":
+            c = "Flight Status"
+            pass
+        elif dataset == "phoneme":
+            c = "class"
+            pass
         datas = self.enc.encode(self.datas[self.datas[c] == self.target].iloc[:, :-1])
         protos = []
         datas = torch.tensor(np.array(datas))           # datas 表示目标类别
@@ -106,6 +118,28 @@ class GetPrototypes():
                 protos.append(self.datas.iloc[i.item()][:-1].tolist())
                 pass
             protos = np.array(protos)
+            pass
+        elif way == "good":
+            indices = []
+            dis = []
+            targets = self.datas[self.datas[c] == self.target].iloc[:,:-1]
+            for row in range(len(samples)):
+                dist = []
+                for tar in range(len(targets)):
+                    dist.append(np.sum(samples.iloc[row].tolist() == targets.iloc[tar].tolist()))
+                    pass
+                dis.append(dist)
+                pass
+            for d in dis:
+                index = torch.sort(torch.tensor(d)).indices[0:self.n_protos].data
+                indices.append(index)
+                indices = list(set(indices))
+                pass
+            indices = torch.cat(indices, dim=0)
+            for i in indices:
+                protos.append(self.datas.iloc[i.item()][:-1].tolist())
+                pass
+            protos = np.array((protos))
             pass
         return protos,indices
     pass

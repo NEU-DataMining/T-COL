@@ -2,29 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 
-PATH = os.path.join("/data/wangm/GLT-fastCFs/Datasets/")
-
-class Climate():
-    """
-    UCI气象数据集
-    Instances: 540
-    Attributes: 18
-    - 18个气象模型的参数[0,1]
-    Classes: 2
-    - 模拟结果: 成功1/失败0
-    """
-    climate = pd.read_csv(PATH+'pop_failures.csv',header=0)
-    climate_data = pd.DataFrame(climate)
-    climate_array = np.array(climate_data,dtype='float')
-    def __init__(self):
-        self.data = self.climate_array[:,:-1]
-        self.target = self.climate_array[:,-1]
-        pass
-    def load_array(self):
-        return self.climate_array
-    def load_data(self):
-        return self.climate_data
-    pass
+PATH = os.path.join("/datas/wangm/T-COL/Datasets/")
 
 class Adult():
     """
@@ -46,31 +24,6 @@ class Adult():
         pass
     def load_data(self):
         return self.adult_data
-    pass
-
-class Student():
-    """
-    UCI学生表现数据集
-    """
-    student = pd.read_csv(PATH+"students.csv",header=0)
-    student_data = pd.DataFrame(student)
-    def __init__(self):
-        self.student_data["G3"] = self.student_data["G3"].apply(lambda x: self.class_transfer(x))
-        self.data = self.student_data.iloc[:,:-1]
-        self.target = self.student_data["G3"]
-        self.categoric = ["school","sex","address","famsize","Pstatus","Mjob","Fjob","reason","guardian","schoolsup","famsup",
-                          "paid","activities","nursery","higher","internet","romantic"]
-        self.continues = self.student_data.columns.difference(self.categoric).drop("G3")
-        self.categorical_features = self.student_data[self.categoric]
-        self.continuous_features = self.student_data[self.continues]
-    def class_transfer(self,x):
-        if x >= 12:
-            return 1
-        else:
-            return 0
-        pass
-    def load_data(self):
-        return self.student_data
     pass
 
 class German():
@@ -95,45 +48,63 @@ class German():
         return self.german_data
     pass
 
-class Shopping():
-    """
-    UCI消费者购物倾向数据集
-    """
-    shopping = pd.read_csv(PATH+"shopping.csv",header=0)
-    shopping_data = pd.DataFrame(shopping)
-    shopping_data["Revenue"].replace("F",0,inplace=True)
-    shopping_data["Revenue"].replace("T", 1, inplace=True)
+class Water():
+    '''
+    Kaggle Water质量数据集
+    '''
+    water = pd.read_csv(PATH+"water_potability.csv",header=0)
+    water_data = pd.DataFrame(water)
+    water_data.dropna(inplace=True)
     def __init__(self):
-        self.data = self.shopping_data.iloc[:,:-1]
-        self.target = self.shopping_data["Revenue"]
-        self.categoric = ["Month","OperatingSystems","Browser","Region","TrafficType","VisitorType","Weekend"]
-        self.continues = self.shopping_data.columns.difference(self.categoric).drop("Revenue")
-        self.categorical_features = self.shopping_data[self.categoric]
-        self.continuous_features = self.shopping_data[self.continues]
+        self.data = self.water_data.iloc[:,:-1]
+        self.target = self.water_data["Potability"]
+        self.categoric = []
+        self.continues = self.water_data.columns.drop("Potability").values.tolist()
+        self.categorical_features = self.water_data[self.categoric]
+        self.continuous_features = self.water_data[self.continues]
         pass
     def load_data(self):
-        return self.shopping_data
+        return self.water_data
     pass
 
-class Car():
-    """
-    UCI汽车满意度数据集
-    """
-    car = pd.read_csv(PATH+"car.csv",header=0)
-    car_data = pd.DataFrame(car)
-    car_data["class"].replace("unacc",0,inplace=True)
-    car_data["class"].replace("acc", 1, inplace=True)
+class Titanic():
+    '''
+    Kaggle Titanic 数据集
+    '''
+    titanic = pd.read_csv(PATH+"titanic.csv",header=0,index_col=0)
+    titanic_data = pd.DataFrame(titanic)
+    titanic_data.dropna(inplace=True)
+    cols = titanic_data.columns.tolist()
+    cols.remove("Survived")
+    cols.append("Survived")
+    titanic_data = titanic_data.reindex(columns = cols)
     def __init__(self):
-        self.data = self.car_data.iloc[:,:-1]
-        self.target = self.car_data["class"]
-        self.categoric = ["buying","maint","doors","persons","lug_boot","safety"]
-        self.continues = []
-        self.categorical_features = self.car_data[self.categoric]
-        self.continuous_features = self.car_data[self.continues]
+        self.data = self.titanic_data.iloc[:,:-1]
+        self.target = self.titanic_data["Survived"]
+        self.categoric = ["Pclass","Sex","Ticket","Cabin","Embarked"]
+        self.continues = self.titanic_data.columns.difference(self.categoric).drop("Survived").values.tolist()
+        self.categorical_features = self.titanic_data[self.categoric]
+        self.continuous_features = self.titanic_data[self.continues]
+        pass
+    def load_data(self):
+        return self.titanic_data
+
+class Phoneme():
+    phoneme = pd.read_csv(PATH + "php8Mz7BG.arff",header=None,
+                 sep=",", usecols=range(6),skiprows=10,
+                 names = ["V1","V2","V3","V4","V5","class"])
+    phoneme_data = pd.DataFrame(phoneme)
+    phoneme_data.replace(1,0,inplace=True)
+    phoneme_data.replace(2,1,inplace=True)
+    def __init__(self):
+        self.data = self.phoneme_data.iloc[:, :-1]
+        self.target = self.phoneme_data["class"]
+        self.categoric = []
+        self.continues = self.phoneme_data.columns.difference(self.categoric).drop("class").values.tolist()
+        self.categorical_features = self.phoneme_data[self.categoric]
+        self.continuous_features = self.phoneme_data[self.continues]
         pass
 
     def load_data(self):
-        return self.car_data
-
-    pass
+        return self.phoneme_data
 
